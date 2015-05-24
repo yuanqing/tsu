@@ -1,0 +1,45 @@
+{
+  "name": "tsu",
+  "version": "0.0.0",
+  "description": "Functional streams.",
+  "author": "Lim Yuan Qing",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/yuanqing/tsu.git"
+  },
+  "dependencies": {
+    "is-buffer": "^1.0.2",
+    "through2": "^0.6.5",
+    "xtend": "^4.0.0"
+  },
+  "devDependencies": {
+    "concat-stream": "^1.4.8",
+    "istanbul": "^0.3.14",
+    "jshint": "^2.7.0",
+    "tape": "^4.0.0"
+  },
+  "scripts": {
+    "lint": "jshint --verbose index.js test/*.js",
+    "test": "rm -rf coverage && istanbul cover -- tape test/*.js --verbose",
+    "build": "npm run lint && npm test"
+  },
+  "keywords": [
+    "array",
+    "each",
+    "filter",
+    "flow",
+    "fold",
+    "fromArray",
+    "function",
+    "functional",
+    "higher-order",
+    "loop",
+    "map",
+    "reduce",
+    "sort",
+    "stream",
+    "streams",
+    "toArray"
+  ]
+}
