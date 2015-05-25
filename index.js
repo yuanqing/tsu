@@ -2,7 +2,7 @@
 
 var extend = require('xtend');
 var isBuffer = require('is-buffer');
-var stream = require('stream');
+var readableStream = require('readable-stream').Readable;
 var through = require('through2');
 
 var defaultOpts = {
@@ -22,7 +22,7 @@ var fromArray = function(opts, arr) {
     arr = opts;
   }
   opts = extend(defaultOpts, opts);
-  var rs = new stream.Readable(opts);
+  var rs = readableStream(opts);
   var i = -1;
   var len = arr.length;
   while (++i < len) {
