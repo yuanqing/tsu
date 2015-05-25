@@ -18,10 +18,11 @@ var tsu = require('tsu');
 
 The following applies to all methods apart from the `fromArray` method:
 - Returns a [`stream.Transform`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform).
-- Takes an optional `opts` object which is passed to `through2`. The defaults are:
-  - `opts.objectMode` &mdash; Defaults to `true`.
-  - `opts.toString` &mdash; Defaults to `true`. Causes each [`Buffer`](https://nodejs.org/api/buffer.html#buffer_class_buffer) in the stream to be returned as a string. Set to `false` to disable this behaviour.
 - Has a `.ctor` method that returns a *constructor* for the custom `stream.Transform`.
+
+All methods take an optional `opts` object which is passed to the [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) (for `fromArray`) or `stream.Transform`. The default settings are:
+  - `opts.objectMode` &mdash; Defaults to `true`.
+  - `opts.castBuffers` &mdash; Defaults to `true`. Converts each [`Buffer`](https://nodejs.org/api/buffer.html#buffer_class_buffer) in the stream to a string. Set to `false` to disable this behaviour.
 
 ### tsu.fromArray([opts, ] arr)
 
@@ -35,7 +36,7 @@ var stream = tsu.fromArray(['x', 'y', 'z']);
 
 ### tsu.toArray([opts, ] cb)
 
-Accumulates all the items in the stream into an array, and calls `cb` with said array. The signature of `cb` is `(arr)`. Call `this.push(chunk)` to pass a chunk down the stream.
+Accumulates all the items in the stream into an array, and calls `cb` with said array. The signature of `cb` is `(arr)`. Call `this.push(chunk)` in `cb` to pass a chunk down the stream.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
@@ -49,7 +50,7 @@ stream.pipe(tsu.toArray(function(arr) {
 
 ### tsu.each([opts, ] fn)
 
-Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. Call `this.push(chunk)` to pass a chunk down the stream.
+Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
@@ -69,7 +70,7 @@ stream.pipe(tsu.each(function(val, i) {
 
 ### tsu.map([opts, ] fn)
 
-Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return the value to which `val` is to be mapped. Call `this.push(chunk)` to pass a chunk down the stream.
+Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return the value to which `val` is to be mapped. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
@@ -86,7 +87,7 @@ stream.pipe(tsu.map(function(val, i) {
 
 ### tsu.filter([opts, ] fn)
 
-Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return a `falsy` value to remove `val` from the stream. Call `this.push(chunk)` to pass a chunk down the stream.
+Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return a `falsy` value to remove `val` from the stream. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
@@ -107,7 +108,7 @@ Calls `fn` with the `acc` accumulator and each item in the stream. The signature
 
 Calls `cb` with the final value of `acc`.
 
-Call `this.push(chunk)` in `fn` and `cb` to pass a chunk down the stream.
+Call `this.push(chunk)` in `fn` or `cb` to pass a chunk down the stream.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
