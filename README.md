@@ -8,17 +8,17 @@
 var tsu = require('tsu');
 ```
 
-- [`fromArray`](#fromArray)
-- [`toArray`](#toArray)
-- [`each`](#each)
-- [`map`](#map)
-- [`filter`](#filter)
-- [`fold`](#fold)
-- [`sort`](#sort)
+- [`fromArray`](#tsufromarrayopts--arr)
+- [`toArray`](#tsutoarrayopts--cb)
+- [`each`](#tsueachopts--fn)
+- [`map`](#tsumapopts--fn)
+- [`filter`](#tsufilteropts--fn)
+- [`fold`](#tsufoldopts--acc-fn-cb)
+- [`sort`](#tsusortopts-compare)
 
 The following applies to all methods apart from the `fromArray` method:
 - Returns a [`stream.Transform`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform).
-- Takes an optional `opts` object which is passed to [`through2`](https://github.com/rvagg/through2#api). The defaults are:
+- Takes an optional `opts` object which is passed to `through2`. The defaults are:
   - `opts.objectMode` &mdash; Defaults to `true`.
   - `opts.toString` &mdash; Defaults to `true`. Causes each [`Buffer`](https://nodejs.org/api/buffer.html#buffer_class_buffer) in the stream to be returned as a string. Set to `false` to disable this behaviour.
 - Has a `.ctor` method that returns a *constructor* for the custom `stream.Transform`.
