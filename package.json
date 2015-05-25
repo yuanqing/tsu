@@ -1,7 +1,7 @@
 {
   "name": "tsu",
   "version": "0.0.1",
-  "description": "Functional streams.",
+  "description": "Functional wrappers over `through2`.",
   "author": "Lim Yuan Qing",
   "license": "MIT",
   "repository": {
