@@ -6,6 +6,7 @@ var readableStream = require('readable-stream').Readable;
 var through = require('through2');
 
 var defaultOpts = {
+  castBuffers: true,
   objectMode: true
 };
 
@@ -41,7 +42,7 @@ var toArray = function(opts, cb) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc.push(opts.toString ? toString(chunk) : chunk);
+    this.__acc.push(opts.castBuffers ? toString(chunk) : chunk);
     transformCb();
   };
   var flush = function(flushCb) {
@@ -65,7 +66,7 @@ var each = function(opts, fn) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    fn.call(this, this.options.toString ? toString(chunk) : chunk, this.__index++);
+    fn.call(this, this.options.castBuffers ? toString(chunk) : chunk, this.__index++);
     transformCb();
   };
   var Each = through.ctor(opts, transform);
@@ -119,7 +120,7 @@ var fold = function(opts, acc, fn, cb) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc = fn.call(this, acc, this.options.toString ? toString(chunk) : chunk, this.__index++);
+    this.__acc = fn.call(this, acc, this.options.castBuffers ? toString(chunk) : chunk, this.__index++);
     transformCb();
   };
   var flush = function(flushCb) {
@@ -145,7 +146,7 @@ var sort = function(opts, compare) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc.push(opts.toString ? toString(chunk) : chunk);
+    this.__acc.push(opts.castBufferToString ? toString(chunk) : chunk);
     transformCb();
   };
   var flush = function(flushCb) {

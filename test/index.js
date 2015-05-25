@@ -44,7 +44,7 @@ test('tsu.toArray(opts, cb)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(2);
     var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, [new Buffer('x'), new Buffer('y')]);
       this.push('foo');
     });
@@ -64,7 +64,7 @@ test('tsu.each(opts, cb)', function(t) {
     var each = tsu.each(function(x, i) {
       this.push([x, i]);
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, [['x', 0], ['y', 1]]);
     });
     stream.pipe(each).pipe(toArray);
@@ -73,10 +73,10 @@ test('tsu.each(opts, cb)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(1);
     var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-    var each = tsu.each({ toString: false }, function(x, i) {
+    var each = tsu.each({ castBuffers: false }, function(x, i) {
       this.push([x, i]);
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, [[new Buffer('x'), 0], [new Buffer('y'), 1]]);
     });
     stream.pipe(each).pipe(toArray);
@@ -93,7 +93,7 @@ test('tsu.map(opts, fn)', function(t) {
       this.push('foo');
       return [x, i];
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, ['foo', ['x', 0], 'foo', ['y', 1]]);
     });
     stream.pipe(filter).pipe(toArray);
@@ -102,11 +102,11 @@ test('tsu.map(opts, fn)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(1);
     var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-    var filter = tsu.map({ toString: false }, function(x, i) {
+    var filter = tsu.map({ castBuffers: false }, function(x, i) {
       this.push('foo');
       return [x, i];
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, ['foo', [new Buffer('x'), 0], 'foo', [new Buffer('y'), 1]]);
     });
     stream.pipe(filter).pipe(toArray);
@@ -123,7 +123,7 @@ test('tsu.filter(opts, fn)', function(t) {
       this.push('foo');
       return i === 0;
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, ['foo', 'x', 'foo']);
     });
     stream.pipe(filter).pipe(toArray);
@@ -132,11 +132,11 @@ test('tsu.filter(opts, fn)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(1);
     var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-    var filter = tsu.filter({ toString: false }, function(x, i) {
+    var filter = tsu.filter({ castBuffers: false }, function(x, i) {
       this.push('foo');
       return i === 0;
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, ['foo', new Buffer('x'), 'foo']);
     });
     stream.pipe(filter).pipe(toArray);
@@ -157,7 +157,7 @@ test('tsu.fold(opts, acc, fn, cb)', function(t) {
       this.push(acc);
       t.looseEqual(acc, [['x', 0], ['y', 1]]);
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, [
         ['x', 0],
         ['y', 1],
@@ -170,7 +170,7 @@ test('tsu.fold(opts, acc, fn, cb)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(2);
     var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-    var fold = tsu.fold({ toString: false }, [], function(acc, x, i) {
+    var fold = tsu.fold({ castBuffers: false }, [], function(acc, x, i) {
       this.push([x, i]);
       acc.push([x, i]);
       return acc;
@@ -178,7 +178,7 @@ test('tsu.fold(opts, acc, fn, cb)', function(t) {
       this.push(acc);
       t.looseEqual(acc, [[new Buffer('x'), 0], [new Buffer('y'), 1]]);
     });
-    var toArray = tsu.toArray({ toString: false }, function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
       t.looseEqual(xs, [
         [new Buffer('x'), 0],
         [new Buffer('y'), 1],
@@ -196,7 +196,7 @@ test('tsu.sort(opts, compare)', function(t) {
     t.plan(1);
     var stream = tsu.fromArray([3, 1, 2]);
     var sort = tsu.sort();
-    var toArray = tsu.toArray({ toString: false },function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false },function(xs) {
       t.looseEqual(xs, [1, 2, 3]);
     });
     stream.pipe(sort).pipe(toArray);
@@ -208,7 +208,7 @@ test('tsu.sort(opts, compare)', function(t) {
     var sort = tsu.sort(function(x, y) {
       return x > y ? -1 : 1;
     });
-    var toArray = tsu.toArray({ toString: false },function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false },function(xs) {
       t.looseEqual(xs, [3, 2, 1]);
     });
     stream.pipe(sort).pipe(toArray);
@@ -217,10 +217,10 @@ test('tsu.sort(opts, compare)', function(t) {
   t.test('with `opts.toString` set to `false`', function(t) {
     t.plan(1);
     var stream = tsu.fromArray({ objectMode: false }, ['3', '1', '2']);
-    var sort = tsu.sort({ toString: false }, function(x, y) {
+    var sort = tsu.sort({ castBuffers: false }, function(x, y) {
       return parseInt(x.toString(), 10) < parseInt(y.toString(), 10) ? -1 : 1;
     });
-    var toArray = tsu.toArray({ toString: false },function(xs) {
+    var toArray = tsu.toArray({ castBuffers: false },function(xs) {
       t.looseEqual(xs, [new Buffer('1'), new Buffer('2'), new Buffer('3')]);
     });
     stream.pipe(sort).pipe(toArray);
