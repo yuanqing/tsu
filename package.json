@@ -1,6 +1,6 @@
 {
   "name": "tsu",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Functional wrappers over `through2`.",
   "author": "Lim Yuan Qing",
   "license": "MIT",
