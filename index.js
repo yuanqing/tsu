@@ -138,14 +138,10 @@ tsu.fold.ctor = fold;
 
 // SORT
 
-var sort = function(opts, fn, cb) {
-  if (!fn) {
-    cb = opts;
-  } else {
-    if (!cb) {
-      cb = fn;
-      fn = opts;
-    }
+var sort = function(opts, compare) {
+  if (typeof opts === 'function') {
+    compare = opts;
+    opts = {};
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
@@ -153,7 +149,12 @@ var sort = function(opts, fn, cb) {
     transformCb();
   };
   var flush = function(flushCb) {
-    cb.call(this, this.__acc.sort(fn));
+    this.__acc.sort(compare);
+    var i = -1;
+    var len = this.__acc.length;
+    while (++i < len) {
+      this.push(this.__acc[i]);
+    }
     flushCb();
   };
   var Sort = through.ctor(opts, transform, flush);
