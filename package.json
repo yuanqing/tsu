@@ -1,7 +1,7 @@
 {
   "name": "tsu",
   "version": "0.0.3",
-  "description": "Functional wrappers over `through2`.",
+  "description": "Utilities and functional wrappers over `through2`.",
   "author": "Lim Yuan Qing",
   "license": "MIT",
   "repository": {
@@ -9,21 +9,20 @@
     "url": "git://github.com/yuanqing/tsu.git"
   },
   "dependencies": {
-    "is-buffer": "^1.0.2",
-    "readable-stream": "^1.0.33",
-    "through2": "^0.6.5",
+    "is-buffer": "^1.1.0",
+    "readable-stream": "^2.0.3",
+    "through2": "^2.0.0",
     "xtend": "^4.0.0"
   },
   "devDependencies": {
-    "concat-stream": "^1.4.8",
-    "istanbul": "^0.3.14",
-    "jshint": "^2.7.0",
-    "tape": "^4.0.0"
+    "concat-stream": "^1.5.1",
+    "eslint": "^1.7.3",
+    "istanbul": "^0.4.0",
+    "tape": "^4.2.2"
   },
   "scripts": {
-    "lint": "jshint --verbose index.js test/*.js",
-    "test": "rm -rf coverage && istanbul cover -- tape test/*.js --verbose",
-    "build": "npm run lint && npm test"
+    "lint": "eslint index.js test/*.js",
+    "test": "rm -rf coverage && istanbul cover -- tape test/*.js --verbose"
   },
   "keywords": [
     "array",
@@ -31,7 +30,6 @@
     "filter",
     "flow",
     "fold",
-    "fromArray",
     "function",
     "functional",
     "higher-order",
@@ -41,6 +39,7 @@
     "sort",
     "stream",
     "streams",
-    "toArray"
+    "through",
+    "through2"
   ]
 }

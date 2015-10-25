@@ -4,13 +4,13 @@ notifications:
 language: node_js
 
 node_js:
-  - '0.10'
-  - '0.11'
   - '0.12'
-  - 'iojs'
+  - '4'
+  - 'stable'
 
 script:
-  - npm run build
+  - npm run lint
+  - npm run test
 
 after_success:
   - npm i coveralls
