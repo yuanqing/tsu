@@ -14,10 +14,10 @@ All methods take an optional `opts` object which is passed to the `stream.Transf
 
 ### Utilities
 
+- [`source`](#tsusourceopts--x)
 - [`through`](#tsuthroughopts--transform-flush)
 - [`flush`](#tsuflushopts--cb)
 - [`noop`](#tsunoopopts)
-- [`source`](#tsusourceopts--x)
 - [`toArray`](#tsutoarrayopts--cb)
 
 ### Functional
@@ -28,42 +28,62 @@ All methods take an optional `opts` object which is passed to the `stream.Transf
 - [`fold`](#tsufoldopts--acc-fn-cb)
 - [`sort`](#tsusortopts-compare)
 
-Each of the above five functional methods also has a `.ctor` method that returns a *constructor* for the custom `stream.Transform`.
+Each functional method also has a `.ctor` method (eg. `tsu.sort.ctor`) that returns a *constructor* for the custom `stream.Transform`.
 
-### tsu.through([opts, ] transform, [flush])
+---
+
+#### tsu.through([opts, ] transform, [flush])
 
 Convenience method that returns a [through](https://github.com/rvagg/through2) stream.
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.flush([opts, ] cb)
+#### tsu.noop([opts])
 
-Returns a through stream where `transform` is a no-op. Calls `cb` when `flush` is called.
-
-<sup>[&#8617;](#api)</sup>
-
-### tsu.noop([opts])
-
-Returns a no-op through stream.
-
-<sup>[&#8617;](#api)</sup>
-
-### tsu.source([opts, ] x)
-
-`x` can be an object, or an array of objects. It can also be a function that returns an object or array of objects. Returns a [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) containing the elements of `x` or that returned by `x`.
+Convenience method that returns a no-op through stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.noop();
 ```
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.toArray([opts, ] cb)
+#### tsu.source([opts, ] x)
+
+Returns a [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) containing the elements of `x` or that returned by `x`. `x` can be an object or array of objects. `x` can also be a function that returns an object or array of objects.
+
+```js
+var fromArray = tsu.source(['x', 'y', 'z']);
+
+var fromFunction = tsu.source(function() {
+  return ['x', 'y', 'z'];
+});
+```
+
+<sup>[&#8617;](#api)</sup>
+
+#### tsu.flush([opts, ] cb)
+
+Returns a through stream where `transform` is a no-op, with the given `cb` called just before the stream ends. Call `this.push(chunk)` in `cb` to pass a chunk down the stream.
+
+```js
+var stream = tsu.source(['x', 'y', 'z']);
+stream.pipe(tsu.flush(function() {
+  this.push('foo');
+})).pipe(tsu.toArray(function(arr) {
+  console.log(arr);
+  //=> [ 'x', 'y', 'z', 'foo' ]
+}));
+```
+
+<sup>[&#8617;](#api)</sup>
+
+#### tsu.toArray([opts, ] cb)
 
 Accumulates all the items in the stream into an array, and calls `cb` with said array. The signature of `cb` is `(arr)`. Call `this.push(chunk)` in `cb` to pass a chunk down the stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.source(['x', 'y', 'z']);
 stream.pipe(tsu.toArray(function(arr) {
   console.log(arr);
   //=> [ 'x', 'y', 'z' ]
@@ -72,12 +92,12 @@ stream.pipe(tsu.toArray(function(arr) {
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.each([opts, ] fn)
+#### tsu.each([opts, ] fn)
 
 Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.source(['x', 'y', 'z']);
 stream.pipe(tsu.each(function(val, i) {
   this.push(val); // pass `val` down the stream
   console.log(val, i);
@@ -92,12 +112,12 @@ stream.pipe(tsu.each(function(val, i) {
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.map([opts, ] fn)
+#### tsu.map([opts, ] fn)
 
 Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return the value to which `val` is to be mapped. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.source(['x', 'y', 'z']);
 stream.pipe(tsu.map(function(val, i) {
   this.push('foo'); // pass 'foo' down the stream
   return i;         // map values to their indices
@@ -109,12 +129,12 @@ stream.pipe(tsu.map(function(val, i) {
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.filter([opts, ] fn)
+#### tsu.filter([opts, ] fn)
 
 Calls `fn` with each item in the stream. The signature of `fn` is `(val, i)`. `fn` must return a `falsy` value to remove `val` from the stream. Call `this.push(chunk)` in `fn` to pass a chunk down the stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.source(['x', 'y', 'z']);
 stream.pipe(tsu.filter(function(val, i) {
   this.push('foo'); // pass 'foo' down the stream
   return i > 0;     // remove 'x' from the stream
@@ -126,7 +146,7 @@ stream.pipe(tsu.filter(function(val, i) {
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.fold([opts, ] acc, fn, cb)
+#### tsu.fold([opts, ] acc, fn, cb)
 
 Calls `fn` with the `acc` accumulator and each item in the stream. The signature of `fn` is `(acc, val, i)`. `fn` must return the new value of `acc`.
 
@@ -135,7 +155,7 @@ Calls `cb` with the final value of `acc`.
 Call `this.push(chunk)` in `fn` or `cb` to pass a chunk down the stream.
 
 ```js
-var stream = tsu.fromArray(['x', 'y', 'z']);
+var stream = tsu.source(['x', 'y', 'z']);
 stream.pipe(tsu.fold({}, function(acc, val, i) {
   this.push('foo'); // pass 'foo' down the stream
   acc[val] = i;     // key is `val`, value is `i`
@@ -152,12 +172,12 @@ stream.pipe(tsu.fold({}, function(acc, val, i) {
 
 <sup>[&#8617;](#api)</sup>
 
-### tsu.sort([opts, compare])
+#### tsu.sort([opts, compare])
 
 Accumulates the items in the stream into an array, sorts the array using the `compare` function, before passing the sorted items back into the stream.
 
 ```js
-var stream = tsu.fromArray([1, 3, 2]);
+var stream = tsu.source([1, 3, 2]);
 stream.pipe(tsu.sort(function(x, y) {
   return x > y ? -1 : 1;
 })).pipe(tsu.toArray(function(arr) {
