@@ -1,9 +1,9 @@
 'use strict';
 
 var extend = require('xtend');
+var through = require('through2');
 var isBuffer = require('is-buffer');
 var readableStream = require('readable-stream').Readable;
-var through = require('through2');
 
 var defaultOpts = {
   castBuffers: true,
@@ -19,6 +19,10 @@ var transformNoop = function(chunk, encoding, transformCb) {
 };
 
 var tsu = {};
+
+// THROUGH
+
+tsu.through = through;
 
 // NO-OP
 
