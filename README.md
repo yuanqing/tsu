@@ -14,10 +14,10 @@ All methods take an optional `opts` object which is passed to the `stream.Transf
 
 ### Utilities
 
-- [`through`](#)
-- [`flush`](#)
-- [`noop`](#)
-- [`source`](#tsufromarrayopts--arr)
+- [`through`](#tsuthroughopts--transform-flush)
+- [`flush`](#tsuflushopts--cb)
+- [`noop`](#tsunoopopts)
+- [`source`](#tsusourceopts--x)
 - [`toArray`](#tsutoarrayopts--cb)
 
 ### Functional
