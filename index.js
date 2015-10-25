@@ -6,7 +6,7 @@ var isBuffer = require('is-buffer');
 var readableStream = require('readable-stream').Readable;
 
 var defaultOpts = {
-  castBuffers: true,
+  toString: true,
   objectMode: true
 };
 
@@ -22,7 +22,24 @@ var tsu = {};
 
 // THROUGH
 
-tsu.through = through;
+tsu.through = function(opts, transformCb, flushCb) {
+  if (typeof opts === 'function') {
+    flushCb = transformCb;
+    transformCb = opts;
+  }
+  opts = extend(defaultOpts, opts);
+  return through(extend(defaultOpts, opts), transformCb, flushCb);
+};
+
+// FLUSH
+
+tsu.flush = function(opts, flush) {
+  if (!flush) {
+    flush = opts;
+  }
+  opts = extend(defaultOpts, opts);
+  return through(opts, transformNoop, flush);
+};
 
 // NO-OP
 
@@ -37,83 +54,40 @@ tsu.source = function(opts, x) {
     x = opts;
   }
   opts = extend(defaultOpts, opts);
-  var flush = function(callback) {
-    if (typeof x === 'function') {
-      x = x();
-    }
-    if (Array.isArray(x)) {
-      var i = -1;
-      var length = x.length;
-      while (++i < length) {
-        this.push(x[i]);
-      }
-    } else {
-      this.push(x);
-    }
-    callback();
-  };
-  var stream = through(opts, transformNoop, flush);
-  process.nextTick(function() {
-    stream.end();
-  });
-  return stream;
-};
-
-// FLUSH
-
-tsu.flush = function(opts, cb) {
-  if (!cb) {
-    cb = opts;
+  if (typeof x === 'function') {
+    x = x();
   }
-  opts = extend(defaultOpts, opts);
-  var flush = function(flushCb) {
-    cb.call(this);
-    flushCb();
-  };
-  return cb ? through(opts, transformNoop, flush) : through(opts);
-};
-
-// FROM ARRAY
-
-var fromArray = function(opts, arr) {
-  if (!arr) {
-    arr = opts;
+  if (!Array.isArray(x)) {
+    x = [x];
   }
-  opts = extend(defaultOpts, opts);
   var rs = readableStream(opts);
   var i = -1;
-  var len = arr.length;
+  var len = x.length;
   while (++i < len) {
-    rs.push(arr[i]);
+    rs.push(x[i]);
   }
   rs.push(null);
   return rs;
 };
-tsu.fromArray = fromArray;
 
 // TO ARRAY
 
-var toArray = function(opts, cb) {
+tsu.toArray = function(opts, cb) {
   if (!cb) {
     cb = opts;
   }
   opts = extend(defaultOpts, opts);
+  var acc = [];
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc.push(opts.castBuffers ? toString(chunk) : chunk);
+    acc.push(opts.toString ? toString(chunk) : chunk);
     transformCb();
   };
   var flush = function(flushCb) {
-    cb.call(this, this.__acc);
+    cb.call(this, acc);
     flushCb();
   };
-  var ToArray = through.ctor(opts, transform, flush);
-  ToArray.prototype.__acc = [];
-  return ToArray;
+  return through(opts, transform, flush);
 };
-tsu.toArray = function(opts, cb) {
-  return toArray(opts, cb)();
-};
-tsu.toArray.ctor = toArray;
 
 // EACH
 
@@ -123,7 +97,7 @@ var each = function(opts, fn) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    fn.call(this, this.options.castBuffers ? toString(chunk) : chunk, this.__index++);
+    fn.call(this, this.options.toString ? toString(chunk) : chunk, this.__index++);
     transformCb();
   };
   var Each = through.ctor(opts, transform);
@@ -177,7 +151,7 @@ var fold = function(opts, acc, fn, cb) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc = fn.call(this, acc, this.options.castBuffers ? toString(chunk) : chunk, this.__index++);
+    this.__acc = fn.call(this, acc, this.options.toString ? toString(chunk) : chunk, this.__index++);
     transformCb();
   };
   var flush = function(flushCb) {
@@ -203,7 +177,7 @@ var sort = function(opts, compare) {
   }
   opts = extend(defaultOpts, opts);
   var transform = function(chunk, encoding, transformCb) {
-    this.__acc.push(opts.castBufferToString ? toString(chunk) : chunk);
+    this.__acc.push(opts.toString ? toString(chunk) : chunk);
     transformCb();
   };
   var flush = function(flushCb) {

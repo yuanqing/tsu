@@ -7,11 +7,11 @@ var test = require('tape');
 
 test('default `opts`', function(t) {
   t.plan(1);
-  var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
+  var stream = tsu.source({ objectMode: false }, ['x', 'y']);
   var each = tsu.each(function(x, i) {
     this.push([x, i]);
   });
-  var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
+  var toArray = tsu.toArray({ toString: false }, function(xs) {
     t.looseEqual(xs, [['x', 0], ['y', 1]]);
   });
   stream.pipe(each).pipe(toArray);
@@ -19,11 +19,11 @@ test('default `opts`', function(t) {
 
 test('with `opts.toString` set to `false`', function(t) {
   t.plan(1);
-  var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-  var each = tsu.each({ castBuffers: false }, function(x, i) {
+  var stream = tsu.source({ objectMode: false }, ['x', 'y']);
+  var each = tsu.each({ toString: false }, function(x, i) {
     this.push([x, i]);
   });
-  var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
+  var toArray = tsu.toArray({ toString: false }, function(xs) {
     t.looseEqual(xs, [[new Buffer('x'), 0], [new Buffer('y'), 1]]);
   });
   stream.pipe(each).pipe(toArray);

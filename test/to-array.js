@@ -8,7 +8,7 @@ var concatStream = require('concat-stream');
 
 test('default `opts`', function(t) {
   t.plan(2);
-  var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
+  var stream = tsu.source({ objectMode: false }, ['x', 'y']);
   var toArray = tsu.toArray(function(xs) {
     t.looseEqual(xs, ['x', 'y']);
     this.push('foo');
@@ -21,8 +21,8 @@ test('default `opts`', function(t) {
 
 test('with `opts.toString` set to `false`', function(t) {
   t.plan(2);
-  var stream = tsu.fromArray({ objectMode: false }, ['x', 'y']);
-  var toArray = tsu.toArray({ castBuffers: false }, function(xs) {
+  var stream = tsu.source({ objectMode: false }, ['x', 'y']);
+  var toArray = tsu.toArray({ toString: false }, function(xs) {
     t.looseEqual(xs, [new Buffer('x'), new Buffer('y')]);
     this.push('foo');
   });
