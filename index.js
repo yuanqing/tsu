@@ -14,7 +14,60 @@ var toString = function(chunk) {
   return isBuffer(chunk) ? chunk.toString() : chunk;
 };
 
+var transformNoop = function(chunk, encoding, transformCb) {
+  transformCb(null, chunk);
+};
+
 var tsu = {};
+
+// NO-OP
+
+tsu.noop = function(opts) {
+  return through(extend(defaultOpts, opts));
+};
+
+// SOURCE
+
+tsu.source = function(opts, x) {
+  if (!x) {
+    x = opts;
+  }
+  opts = extend(defaultOpts, opts);
+  var flush = function(callback) {
+    if (typeof x === 'function') {
+      x = x();
+    }
+    if (Array.isArray(x)) {
+      var i = -1;
+      var length = x.length;
+      while (++i < length) {
+        this.push(x[i]);
+      }
+    } else {
+      this.push(x);
+    }
+    callback();
+  };
+  var stream = through(opts, transformNoop, flush);
+  process.nextTick(function() {
+    stream.end();
+  });
+  return stream;
+};
+
+// FLUSH
+
+tsu.flush = function(opts, cb) {
+  if (!cb) {
+    cb = opts;
+  }
+  opts = extend(defaultOpts, opts);
+  var flush = function(flushCb) {
+    cb.call(this);
+    flushCb();
+  };
+  return cb ? through(opts, transformNoop, flush) : through(opts);
+};
 
 // FROM ARRAY
 
