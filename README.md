@@ -34,13 +34,19 @@ Each of the above five functional methods also has a `.ctor` method that returns
 
 Convenience method that returns a [through](https://github.com/rvagg/through2) stream.
 
+<sup>[&#8617;](#api)</sup>
+
 ### tsu.flush([opts, ] cb)
 
 Returns a through stream where `transform` is a no-op. Calls `cb` when `flush` is called.
 
+<sup>[&#8617;](#api)</sup>
+
 ### tsu.noop([opts])
 
 Returns a no-op through stream.
+
+<sup>[&#8617;](#api)</sup>
 
 ### tsu.source([opts, ] x)
 
@@ -177,4 +183,4 @@ $ npm i --save tsu
 
 ## License
 
-[MIT](https://github.com/yuanqing/tsu/blob/master/LICENSE)
+[MIT](LICENSE.md)
