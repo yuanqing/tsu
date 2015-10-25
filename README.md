@@ -1,6 +1,6 @@
 # tsu [![npm Version](http://img.shields.io/npm/v/tsu.svg?style=flat)](https://www.npmjs.org/package/tsu) [![Build Status](https://img.shields.io/travis/yuanqing/tsu.svg?style=flat)](https://travis-ci.org/yuanqing/tsu) [![Coverage Status](https://img.shields.io/coveralls/yuanqing/tsu.svg?style=flat)](https://coveralls.io/r/yuanqing/tsu)
 
-> Functional wrappers over [`through2`](https://github.com/rvagg/through2).
+> Utilities and functional wrappers over [`through2`](https://github.com/rvagg/through2).
 
 ## API
 
@@ -8,25 +8,43 @@
 var tsu = require('tsu');
 ```
 
-- [`fromArray`](#tsufromarrayopts--arr)
+All methods take an optional `opts` object which is passed to the `stream.Transform`. `opts` take the following keys:
+- `objectMode` &mdash; Defaults to `true`.
+- `toString` &mdash; Defaults to `true`. Converts each [`Buffer`](https://nodejs.org/api/buffer.html#buffer_class_buffer) in the stream to a string. Set to `false` to disable this behaviour.
+
+### Utilities
+
+- [`through`](#)
+- [`flush`](#)
+- [`noop`](#)
+- [`source`](#tsufromarrayopts--arr)
 - [`toArray`](#tsutoarrayopts--cb)
+
+### Functional
+
 - [`each`](#tsueachopts--fn)
 - [`map`](#tsumapopts--fn)
 - [`filter`](#tsufilteropts--fn)
 - [`fold`](#tsufoldopts--acc-fn-cb)
 - [`sort`](#tsusortopts-compare)
 
-The following applies to all methods apart from the `fromArray` method:
-- Returns a [`stream.Transform`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_transform).
-- Has a `.ctor` method that returns a *constructor* for the custom `stream.Transform`.
+Each of the above five functional methods also has a `.ctor` method that returns a *constructor* for the custom `stream.Transform`.
 
-All methods take an optional `opts` object which is passed to the [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) (for `fromArray`) or `stream.Transform`. The default settings are:
-  - `opts.objectMode` &mdash; Defaults to `true`.
-  - `opts.castBuffers` &mdash; Defaults to `true`. Converts each [`Buffer`](https://nodejs.org/api/buffer.html#buffer_class_buffer) in the stream to a string. Set to `false` to disable this behaviour.
+### tsu.through([opts, ] transform, [flush])
 
-### tsu.fromArray([opts, ] arr)
+Convenience method that returns a [through](https://github.com/rvagg/through2) stream.
 
-Returns a [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) containing the elements of `arr`.
+### tsu.flush([opts, ] flush)
+
+Returns a through stream where `transform` is a no-op.
+
+### tsu.noop([opts])
+
+Returns a no-op through stream.
+
+### tsu.source([opts, ] x)
+
+`x` can be an object, or an array of objects. It can also be a function that returns an object or array of objects. Returns a [`stream.Readable`](https://nodejs.org/docs/latest/api/stream.html#stream_class_stream_readable) containing the elements of `x` or that returned by `x`.
 
 ```js
 var stream = tsu.fromArray(['x', 'y', 'z']);
