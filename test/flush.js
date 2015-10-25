@@ -12,9 +12,8 @@ test('default `opts`', function(t) {
     { x: 1 },
     { y: 2 }
   ]);
-  var flush = tsu.flush(function(flushCb) {
+  var flush = tsu.flush(function() {
     this.push({ z: 3 });
-    flushCb();
   });
   var concat = concatStream(function(x) {
     t.looseEqual(x, [
@@ -29,9 +28,8 @@ test('default `opts`', function(t) {
 test('with `opts.objectMode` set to `false`', function(t) {
   t.plan(1);
   var stream = tsu.source({ objectMode: false }, ['x', 'y']);
-  var flush = tsu.flush({ objectMode: false }, function(flushCb) {
+  var flush = tsu.flush({ objectMode: false }, function() {
     this.push('z');
-    flushCb();
   });
   var concat = concatStream(function(x) {
     t.looseEqual(x, new Buffer('xyz'));

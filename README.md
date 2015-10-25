@@ -34,9 +34,9 @@ Each of the above five functional methods also has a `.ctor` method that returns
 
 Convenience method that returns a [through](https://github.com/rvagg/through2) stream.
 
-### tsu.flush([opts, ] flush)
+### tsu.flush([opts, ] cb)
 
-Returns a through stream where `transform` is a no-op.
+Returns a through stream where `transform` is a no-op. Calls `cb` when `flush` is called.
 
 ### tsu.noop([opts])
 

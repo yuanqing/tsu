@@ -33,12 +33,15 @@ tsu.through = function(opts, transformCb, flushCb) {
 
 // FLUSH
 
-tsu.flush = function(opts, flush) {
-  if (!flush) {
-    flush = opts;
+tsu.flush = function(opts, cb) {
+  if (!cb) {
+    cb = opts;
   }
   opts = extend(defaultOpts, opts);
-  return through(opts, transformNoop, flush);
+  return through(opts, transformNoop, function(flushCb) {
+    cb.call(this);
+    flushCb();
+  });
 };
 
 // NO-OP
